@@ -32,6 +32,15 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+group :development,:test do
+  gem 'sqlite3'
+end
+
+group :production do
+  gem 'pg'
+end
+
+gem 'heroku'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 
