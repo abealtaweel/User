@@ -1,0 +1,57 @@
+<div id ="message"></div> 
+<form accept-charset="UTF-8" action="/accounts" class="new_account" data-remote="true" id="new_account" method="post">
+  <div style="margin:0;padding:0;display:inline">
+  <input name="utf8" value="✓" type="hidden"></div>
+  
+  <div class="field">
+    <label for="account_email">Email</label><br>
+    <input id="account_email" name="account[email]" type="email">
+  </div>
+  
+  <div class="field">
+    <label for="account_password">Password</label><br>
+    <input id="account_password" name="account[password]" type="password">
+  </div>
+  
+  <div class="field">
+    <label for="account_ssn">SSN</label><br>
+    <input id="account_ssn" name="account[ssn]" type="text">
+  </div>
+</form>
+<button id="ajax_submit">submit</button><br>
+<script>
+$(document).ready(function() { 
+    $("body").on("click","#ajax_submit",function(e){
+        var form = $('#new_account');
+        form.submit(function(e)
+        {
+          e.preventDefault();
+          var postData = $(this).serialize();
+          var formURL = $(this).attr('action')
+          $.ajax(
+          {
+            url:formURL,
+            type:"POST",
+            data : postData,
+            success:function(data,textStatus,jqXHR)
+            {
+              console.log('sucess:'+data+' status:'+textStatus);
+              $('#message').html('<h5>Reqest Type:POST</h5><h5>Data:'+postData+"</h5>"+"<h5>Status: "+textStatus+" </h5><h5>Response header content type:"+jqXHR.getResponseHeader("content-type")+"</h5>");
+              $('#message').append('<h2>Thank you for submitting your information!</h2>').hide()
+              .fadeIn(2500, function() {
+              $('#message').append("");
+              });
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+              console.log('Status: '+textStatus+'Error: '+errorThrown); 
+              $('#message').html('Unfortunately, your post request failed with :'+errorThrown);
+            }
+          });
+          $(this).unbind('submit');
+          return false;
+        });
+       form.submit();
+    });
+});
+</script>
