@@ -1,4 +1,7 @@
+<div id="col1">
+<%= link_to 'Back', accounts_path %>
 <div id ="message"></div> 
+<h5>New account </h5>
 <form accept-charset="UTF-8" action="/accounts" class="new_account" data-remote="true" id="new_account" method="post">
   <div style="margin:0;padding:0;display:inline">
   <input name="utf8" value="✓" type="hidden"></div>
@@ -19,34 +22,116 @@
   </div>
 </form>
 <button id="ajax_submit">submit</button><br>
+</div>
+
+<div id="col2">
+<h3>First-Party Cookie Demonstration</h3>
+<b style="font-style:italic">Email will be saved in cookie</b>
+<div id="cookie"></div>
+<a id="check_cookie" href="#"> Set Cookie</a> 
+<a id="delete_cookie" href="#"> Delete Cookie</a> 
+</div>
+
+
+
+<div id="col4">
+<h3>Local Storage Demonstration</h3>
+<h5>Cookies are saved in local storage and displayed here...</h5>
+<div id='ls'></div>
+</div>
+
+
+<div id="col5" style="display:none">
+<img src="/assets/cookie-cat.jpg" style="width=250px"/>
+</div>
+<div style="clear:both;"></div><br>
+<h4>Third-Party Cookie is demonstrated by Google Analytics on this page</h4>
+
+
+
+
+<style type="text/css">
+#col1 {
+  float:left;
+  margin:10px;
+  padding:0px;
+  width:200px;
+} 
+
+#col2 {
+  float:left;
+  margin:10px;
+  padding:0px;
+  width:250px;
+}  
+
+#col4 {
+  float:left;
+  margin:10px;
+  padding:0px;
+  width:250px;
+}  
+</style>
 <script>
+
+
 $(document).ready(function() { 
-    $("body").on("click","#ajax_submit",function(e){
-        var form = $('#new_account');
-        form.submit(function(e)
-        {
-          e.preventDefault();
-          var postData = $(this).serialize();
-          var formURL = $(this).attr('action')
-          $.ajax(
+      
+      $('body').on('click','#check_cookie',function(e){
+            console.log('check cookie');
+            checkCookie();
+      });
+ 
+      $("body").on('click',"#delete_cookie",function(e){
+            console.log('delete cookie');
+            var old_cookie = document.cookie;
+            document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            localStorage.removeItem('cookie');
+            $('#cookie').html('<p>Last deleted cookie: '+old_cookie+'</p>');
+            $('#cookie').append('<b>Now there is no cookie</b>');
+            
+            $('#ls').html('<p>This should be true because local storage is deleted together with cookie =></p>').css('background-color','#C0C0C0');
+
+            $('#ls').append(localStorage.getItem('cookie')==null).css('background-color','#C0C0C0');
+            $('#col5').fadeOut('20000');
+      });
+
+
+      $('body').on('click','#check_ls',function(e){
+          localStorage.setItem('favoriteflavor','vanilla');
+      });
+ 
+      $("body").on('click',"#delete_ls",function(e){
+           var taste = localStorage.getItem('favoriteflavor');
+      });
+    
+
+      $("body").on("click","#ajax_submit",function(e){
+          var form = $('#new_account');
+          form.submit(function(e)
           {
-            url:formURL,
-            type:"POST",
-            data : postData,
-            success:function(data,textStatus,jqXHR)
-            {
-              console.log('sucess:'+data+' status:'+textStatus);
-              $('#message').html('<h5>Reqest Type:POST</h5><h5>Data:'+postData+"</h5>"+"<h5>Status: "+textStatus+" </h5><h5>Response header content type:"+jqXHR.getResponseHeader("content-type")+"</h5>");
-              $('#message').append('<h2>Thank you for submitting your information!</h2>').hide()
-              .fadeIn(2500, function() {
-              $('#message').append("");
-              });
-            },
-            error: function(jqXHR, textStatus, errorThrown) 
-            {
-              console.log('Status: '+textStatus+'Error: '+errorThrown); 
-              $('#message').html('Unfortunately, your post request failed with :'+errorThrown);
-            }
+              e.preventDefault();
+              var postData = $(this).serialize();
+              var formURL = $(this).attr('action')
+              $.ajax(
+              {
+                  url:formURL,
+                  type:"POST",
+                  data : postData,
+                  success:function(data,textStatus,jqXHR)
+                  {
+                      console.log('sucess:'+data+' status:'+textStatus);
+                      $('#message').html('<h5>Reqest Type:POST</h5><h5>Data:'+postData+"</h5>"+"<h5>Status: "+textStatus+" </h5><h5>Response header content type:"+jqXHR.getResponseHeader("content-type")+"</h5>");
+                      $('#message').append('<h2>Thank you for submitting your information!</h2>').hide()
+                      .fadeIn(2500, function() {
+                      $('#message').append("");
+                   });
+              },
+              error: function(jqXHR, textStatus, errorThrown) 
+              {
+                  console.log('Status: '+textStatus+'Error: '+errorThrown); 
+                  $('#message').html('Unfortunately, your post request failed with :'+errorThrown);
+              }
           });
           $(this).unbind('submit');
           return false;
@@ -54,4 +139,55 @@ $(document).ready(function() {
        form.submit();
     });
 });
+
+
+function setCookie(email,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = email+"="+cvalue+"; "+expires;
+    localStorage.setItem('cookie',document.cookie);
+}
+
+
+function getCookie(email) {
+    var name = email + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+
+function checkCookie() {
+    var user=getCookie("email");
+
+    if (user != "") {
+      $('#cookie').html(document.cookie).css( "background-color", "#C0C0C0" );
+      var cookie = localStorage.getItem('cookie');
+      $('#ls').html(cookie);
+
+      $('#col5').fadeIn('20000');
+    } 
+       else {
+       value = $('#account_email').val();
+       
+       if (value!="" && value!=null){
+          setCookie("email", value, 30);
+          $('#cookie').html(document.cookie).css( "background-color","#C0C0C0" );
+          var cookie = localStorage.getItem('cookie');
+          $('#ls').html(cookie);
+          $('#col5').fadeIn('20000');
+       }
+       else{
+          setCookie("email","default-cookie", 30);
+          $('#cookie').html(document.cookie).css( "background-color", "#C0C0C0" );
+          var cookie = localStorage.getItem('cookie');
+          $('#ls').html(cookie);
+          $('#col5').fadeIn('20000');
+       }
+    }
+}
 </script>
