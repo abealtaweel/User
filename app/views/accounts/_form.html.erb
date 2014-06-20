@@ -90,7 +90,7 @@ $(document).ready(function() {
             $('#cookie').html('<p>Last deleted cookie: '+old_cookie+'</p>');
             $('#cookie').append('<b>Now there is no cookie</b>');
             
-            $('#ls').html('<p>This should be true because local storage is deleted together with cookie =></p>').css('background-color','#C0C0C0');
+            $('#ls').html('<p>This should be true because local storage is deleted together with cookie: </p>').css('background-color','#C0C0C0');
 
             $('#ls').append(localStorage.getItem('cookie')==null).css('background-color','#C0C0C0');
             $('#col5').fadeOut('20000');
