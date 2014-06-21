@@ -30,7 +30,10 @@
 <div id="cookie"></div>
 <a id="check_cookie" href="#"> Set Cookie</a> 
 <a id="delete_cookie" href="#"> Delete Cookie</a> 
+<hr>
+<h5>First-Party Cookie is also demonstrated by Google Analytics on this page</h5>
 </div>
+
 
 
 
@@ -45,11 +48,27 @@
 <img src="/assets/cookie-cat.jpg" style="width=250px"/>
 </div>
 <div style="clear:both;"></div><br>
-<h4>Third-Party Cookie is demonstrated by Google Analytics on this page</h4>
 
 
 
+<h3>Third-Party Cookie Demonstration</h3>
+<p>Third party cookie is set automatically by loading this image</p>
+  
+<a id="check_third_party_cookie" href="#">
+  Check Third Party Cookie
+</a>
 
+<a id="hide" href="#">
+  hide third party cookie
+</a>
+<div id="third_party"></div>
+
+
+ <div id="mydiv">
+   <iframe id="iframe" src="" width="500" height="500">
+   </iframe>
+  </div>
+ 
 <style type="text/css">
 #col1 {
   float:left;
@@ -76,37 +95,40 @@
 
 
 $(document).ready(function() { 
+
+    //load iframe on document.ready
+    $("#iframe").attr("src", "http://fathomless-beach-3350.herokuapp.com");
+
+    $('body').on('click','#check_third_party_cookie',function(e){
+            console.log('check third party cookie');
+            checkThirdPartyCookie();
+    });
+
+
+    $('body').on('click','#hide',function(e){
+          $('#third_party').fadeOut(1000);
+    });
       
-      $('body').on('click','#check_cookie',function(e){
+    $('body').on('click','#check_cookie',function(e){
             console.log('check cookie');
             checkCookie();
-      });
+    });
  
-      $("body").on('click',"#delete_cookie",function(e){
+    $("body").on('click',"#delete_cookie",function(e){
             console.log('delete cookie');
-            var old_cookie = document.cookie;
+            var old_cookie = getCookie('email');
             document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             localStorage.removeItem('cookie');
             $('#cookie').html('<p>Last deleted cookie: '+old_cookie+'</p>');
             $('#cookie').append('<b>Now there is no cookie</b>');
-            
             $('#ls').html('<p>This should be true because local storage is deleted together with cookie: </p>').css('background-color','#C0C0C0');
-
             $('#ls').append(localStorage.getItem('cookie')==null).css('background-color','#C0C0C0');
             $('#col5').fadeOut('20000');
       });
-
-
-      $('body').on('click','#check_ls',function(e){
-          localStorage.setItem('favoriteflavor','vanilla');
-      });
  
-      $("body").on('click',"#delete_ls",function(e){
-           var taste = localStorage.getItem('favoriteflavor');
-      });
     
 
-      $("body").on("click","#ajax_submit",function(e){
+    $("body").on("click","#ajax_submit",function(e){
           var form = $('#new_account');
           form.submit(function(e)
           {
@@ -149,7 +171,6 @@ function setCookie(email,cvalue,exdays) {
     localStorage.setItem('cookie',document.cookie);
 }
 
-
 function getCookie(email) {
     var name = email + "=";
     var ca = document.cookie.split(';');
@@ -160,12 +181,19 @@ function getCookie(email) {
     return "";
 }
 
+function checkThirdPartyCookie(){
+  var img = getCookie("image");
+  console.log('Third-Party: '+img);
+  $('#third_party').html(img);
+  $('#third_party').fadeIn(1000);
+}
+
 
 function checkCookie() {
     var user=getCookie("email");
 
     if (user != "") {
-      $('#cookie').html(document.cookie).css( "background-color", "#C0C0C0" );
+      $('#cookie').html(getCookie('email')).css( "background-color", "#C0C0C0" );
       var cookie = localStorage.getItem('cookie');
       $('#ls').html(cookie);
 
@@ -176,14 +204,14 @@ function checkCookie() {
        
        if (value!="" && value!=null){
           setCookie("email", value, 30);
-          $('#cookie').html(document.cookie).css( "background-color","#C0C0C0" );
+          $('#cookie').html(getCookie('email')).css( "background-color","#C0C0C0" );
           var cookie = localStorage.getItem('cookie');
           $('#ls').html(cookie);
           $('#col5').fadeIn('20000');
        }
        else{
           setCookie("email","default-cookie", 30);
-          $('#cookie').html(document.cookie).css( "background-color", "#C0C0C0" );
+          $('#cookie').html(getCookie('email')).css( "background-color", "#C0C0C0" );
           var cookie = localStorage.getItem('cookie');
           $('#ls').html(cookie);
           $('#col5').fadeIn('20000');
